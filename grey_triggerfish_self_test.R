@@ -1,5 +1,5 @@
 # install and load packages ----
-devtools::install_github("nmfs-fish-tools/SSMSE", ref = "6923707")
+devtools::install_github("nmfs-fish-tools/SSMSE", ref = "interim_dev")
 library(SSMSE)
 library(r4ss)
 library(ggplot2) # use install.packages("ggplot2") to install package if needed
@@ -7,10 +7,10 @@ library(tidyr) # use install.packages("tidyr") to install package if needed
 library(dplyr)
 
 # hard coded values -----
-base_mod_path <- file.path("model_files", "GT_3.30_base_run")
+base_mod_path <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","model_files", "GT_3.30_base_run")
 
 #  create folders ----
-EM_mod_path <- file.path("SS_runs", "GT_no_var_adj_EM")
+EM_mod_path <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","SS_runs", "GT_no_var_adj_EM")
 dir.create(EM_mod_path,recursive = TRUE)
 dir.create("figures")
 
@@ -50,25 +50,30 @@ sampling_mod <- lapply(sampling, function(x) {
 )
 sampling_mod$lencomp[sampling_mod$lencomp$FltSvy == 1, "Part"] <- 2
 
-out_dir <- file.path("SS_runs", "triggerfish")
+out_dir <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","SS_runs")
 dir.create(out_dir)
-
+out_dir <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","SS_runs", "triggerfish")
+dir.create(out_dir)
 # run the grey triggerfish base case ----
 sampling_list <- run_SSMSE(scen_name_vec = "base",
                            out_dir_scen_vec = out_dir,
-                           iter_vec = 10,
+                           iter_vec = 2,
                            OM_in_dir_vec = base_mod_path,
                            OM_name_vec = NULL,
                            EM_in_dir_vec = EM_mod_path,
                            EM_name_vec = NULL,
-                           MS_vec = "EM",
+                           MS_vec = "Interim",
                            use_SS_boot_vec = TRUE,
                            scope = 2,
                            rec_dev_pattern = "none",
-                           nyrs_vec = 3,
-                           nyrs_assess_vec = 3,
+                           nyrs_vec = 5,
+                           nyrs_assess_vec = 1,
                            impl_error_pattern = "none",
                            seed = 12345,
+                           interim_struct_list = list(MA_years=3,assess_freq=10,
+                                                      Beta=c(1,1,1,1,1,1,1,1,1,1),
+                                                      Index_weights=c(0,0,0,1,0,0,1,0,0,0),
+                                                      Ref_years=c(0,0,0,0,0,0,0,0,0,0)),
                            sample_struct_list = list(sampling_mod))
 
 # plot some results ----

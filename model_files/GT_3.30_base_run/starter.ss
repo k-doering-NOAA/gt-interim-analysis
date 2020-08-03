@@ -5,7 +5,7 @@
 #
 trigger_EonlyShrimp.dat #_datfile
 Trigger_age_ctl_Eonly.SS #_ctlfile
-0 #_init_values_src
+1 #_init_values_src
 1 #_run_display_detail
 1 #_detailed_age_structure
 1 #_checkup
@@ -14,7 +14,7 @@ Trigger_age_ctl_Eonly.SS #_ctlfile
 1 #_prior_like
 1 #_soft_bounds
 2 #_N_bootstraps
-10 #_last_estimation_phase
+0 #_last_estimation_phase
 10 #_MCMCburn
 2 #_MCMCthin
 0 #_jitter_fraction
