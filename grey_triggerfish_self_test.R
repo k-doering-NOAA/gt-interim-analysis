@@ -50,14 +50,48 @@ sampling_mod <- lapply(sampling, function(x) {
 )
 sampling_mod$lencomp[sampling_mod$lencomp$FltSvy == 1, "Part"] <- 2
 
+sample_struct_list <- list()
+interim_struct_list <- list()
+scenario_name <- vector()
+MA_opts <- c(1)#,3,5)
+Beta_opts <- c(0)#,1,3)
+Index_opts <- c(5)#,6,7,8,9)
+Ref_opts <- c(0)#,0,2035)
+assess_freq <- 10
+for(i in seq_along(MA_opts)){
+  MA_years<-MA_opts[i]
+  for(j in seq_along(Beta_opts)){
+    Beta<-rep(Beta_opts[j],10)
+    for(k in seq_along(Index_opts)){
+      Index_weights<-rep(0,10)
+      Index_weights[Index_opts[k]]<-1
+      for(l in seq_along(Ref_opts)){
+        Ref_years<-rep(Ref_opts[l],10)
+        
+        index_val <- (i-1)*length(Beta_opts)*length(Index_opts)*length(Ref_opts) +
+                     (j-1)*length(Index_opts)*length(Ref_opts) +
+                     (k-1)*length(Ref_opts) + l
+        
+        interim_struct_list[[index_val]] <- list(MA_years=MA_years, assess_freq=assess_freq,
+                                                 Beta=Beta, Index_weights=Index_weights,
+                                                 Ref_years=Ref_years)
+        
+        sample_struct_list[[index_val]] <- sampling_mod
+        
+        scenario_name[index_val] <- paste(MA_years,Beta,Index_opts[k],Ref_opts[l],sep="_")
+      }
+    }
+  }
+}
+
 out_dir <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","SS_runs")
 dir.create(out_dir)
 out_dir <- file.path("C:/Users/Nathan/Documents/GitHub/gt-interim-analysis","SS_runs", "triggerfish")
 dir.create(out_dir)
 # run the grey triggerfish base case ----
-sampling_list <- run_SSMSE(scen_name_vec = "base",
+sampling_list <- run_SSMSE(scen_name_vec = scenario_name,
                            out_dir_scen_vec = out_dir,
-                           iter_vec = 2,
+                           iter_vec = 5,
                            OM_in_dir_vec = base_mod_path,
                            OM_name_vec = NULL,
                            EM_in_dir_vec = EM_mod_path,
@@ -65,16 +99,13 @@ sampling_list <- run_SSMSE(scen_name_vec = "base",
                            MS_vec = "Interim",
                            use_SS_boot_vec = TRUE,
                            scope = 2,
-                           rec_dev_pattern = "none",
+                           rec_dev_pattern = "AutoCorr_rand",
                            nyrs_vec = 5,
                            nyrs_assess_vec = 1,
                            impl_error_pattern = "none",
                            seed = 12345,
-                           interim_struct_list = list(MA_years=3,assess_freq=10,
-                                                      Beta=c(1,1,1,1,1,1,1,1,1,1),
-                                                      Index_weights=c(0,0,0,1,0,0,1,0,0,0),
-                                                      Ref_years=c(0,0,0,0,0,0,0,0,0,0)),
-                           sample_struct_list = list(sampling_mod))
+                           interim_struct_list = interim_struct_list,
+                           sample_struct_list = sample_struct_list)
 
 # plot some results ----
 results <- SSMSE_summary_all(out_dir)
