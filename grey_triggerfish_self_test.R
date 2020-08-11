@@ -35,19 +35,33 @@ SS_writectl(ctl,
             verbose = FALSE)
 
 # get sampling ---
-sampling <- create_sample_struct(dat = dat, nyrs = 3)
+sampling <- create_sample_struct(dat = dat, nyrs = 10)
 
 # remove NAs for now
 sampling$agecomp <- NULL
 
 # modify sampling as needed
+
 sampling_mod <- lapply(sampling, function(x) {
   x <- x[!is.na(x$Yr), ]
-  if("SE" %in% colnames(x)) x$SE  <- 0.01
+  if("SE" %in% colnames(x)) x$SE  <- 0.1
   if("Nsamp" %in% colnames(x))  x$Nsamp  <- 20
   x
 }
 )
+
+temp_CPUE<-dat$CPUE
+SEs<-temp_CPUE[1:max(abs(temp_CPUE[["index"]])),]
+for(i in 1:length(SEs[,1])){
+  SEs[i,"seas"] <- temp_CPUE[temp_CPUE[,"index"]==i,"seas"][1]
+  SEs[i,"obs"] <- 1
+  SEs[i,"index"] <- i
+  SEs[i,"se_log"] <- median(temp_CPUE[temp_CPUE[,"index"]==i,"se_log"])
+}
+sampling_mod$CPUE[,"SE"]<-SEs[sampling_mod$CPUE[,"FltSvy"],"se_log"]
+
+
+
 sampling_mod$lencomp[sampling_mod$lencomp$FltSvy == 1, "Part"] <- 2
 
 sample_struct_list <- list()
@@ -78,7 +92,7 @@ for(i in seq_along(MA_opts)){
         
         sample_struct_list[[index_val]] <- sampling_mod
         
-        scenario_name[index_val] <- paste(MA_years,Beta,Index_opts[k],Ref_opts[l],sep="_")
+        scenario_name[index_val] <- paste(MA_years,Beta[Index_opts[k]],Index_opts[k],Ref_opts[l],sep="_")
       }
     }
   }
@@ -91,7 +105,7 @@ dir.create(out_dir)
 # run the grey triggerfish base case ----
 sampling_list <- run_SSMSE(scen_name_vec = scenario_name,
                            out_dir_scen_vec = out_dir,
-                           iter_vec = 5,
+                           iter_vec = 2,
                            OM_in_dir_vec = base_mod_path,
                            OM_name_vec = NULL,
                            EM_in_dir_vec = EM_mod_path,
@@ -99,7 +113,8 @@ sampling_list <- run_SSMSE(scen_name_vec = scenario_name,
                            MS_vec = "Interim",
                            use_SS_boot_vec = TRUE,
                            scope = 2,
-                           rec_dev_pattern = "AutoCorr_rand",
+                           rec_dev_pattern = "rand",
+                           rec_dev_pars = c(100,1),
                            nyrs_vec = 5,
                            nyrs_assess_vec = 1,
                            impl_error_pattern = "none",
