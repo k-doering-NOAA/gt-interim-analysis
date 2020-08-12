@@ -129,7 +129,8 @@ sampling_list <- run_SSMSE(scen_name_vec = scenario_name,
                            impl_error_pattern = "none",
                            seed = 12345,
                            interim_struct_list = interim_struct_list,
-                           sample_struct_list = sample_struct_list)
+                           sample_struct_list = sample_struct_list,
+                           run_parallel = TRUE)
 
 # plot some results ----
 results <- SSMSE_summary_all(out_dir)
