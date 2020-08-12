@@ -1,5 +1,8 @@
 # install and load packages ----
 devtools::install_github("nmfs-fish-tools/SSMSE", ref = "interim_dev")
+library(parallel)
+library(doParallel)
+library(foreach)
 library(SSMSE)
 library(r4ss)
 library(ggplot2) # use install.packages("ggplot2") to install package if needed
@@ -50,6 +53,12 @@ sampling_mod <- lapply(sampling, function(x) {
 }
 )
 
+temp_fleet<-sampling_mod$CPUE[sampling_mod$CPUE[,"FltSvy"]==6,]
+temp_fleet[,"FltSvy"]<-7
+sampling_mod$CPUE <- rbind(sampling_mod$CPUE,temp_fleet)
+temp_fleet[,"FltSvy"]<-9
+sampling_mod$CPUE <- rbind(sampling_mod$CPUE,temp_fleet)
+
 temp_CPUE<-dat$CPUE
 SEs<-temp_CPUE[1:max(abs(temp_CPUE[["index"]])),]
 for(i in 1:length(SEs[,1])){
@@ -67,10 +76,10 @@ sampling_mod$lencomp[sampling_mod$lencomp$FltSvy == 1, "Part"] <- 2
 sample_struct_list <- list()
 interim_struct_list <- list()
 scenario_name <- vector()
-MA_opts <- c(1)#,3,5)
-Beta_opts <- c(0)#,1,3)
-Index_opts <- c(5)#,6,7,8,9)
-Ref_opts <- c(0)#,0,2035)
+MA_opts <- c(1,3,5)
+Beta_opts <- c(0,1,3)
+Index_opts <- c(5,6,7,8,9)
+Ref_opts <- c(2017,0,2035)
 assess_freq <- 10
 for(i in seq_along(MA_opts)){
   MA_years<-MA_opts[i]
@@ -105,7 +114,7 @@ dir.create(out_dir)
 # run the grey triggerfish base case ----
 sampling_list <- run_SSMSE(scen_name_vec = scenario_name,
                            out_dir_scen_vec = out_dir,
-                           iter_vec = 2,
+                           iter_vec = 7,
                            OM_in_dir_vec = base_mod_path,
                            OM_name_vec = NULL,
                            EM_in_dir_vec = EM_mod_path,
