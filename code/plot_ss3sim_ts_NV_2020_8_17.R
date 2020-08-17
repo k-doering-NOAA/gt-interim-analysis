@@ -47,8 +47,8 @@ dat_vioplot$Ref_Yr_fac <- factor(dat_vioplot$Ref_Yr, levels = c("0", "2013", "20
                                             "Ref index - yr 2017", "Ref index - equil" ))
   
 SSBratio_2025_plot <-   ggplot(dat_vioplot, aes(x = Index_fac, y = SSBratio)) +
-                          geom_hline(yintercept = 1, color = "blue") +
-                          geom_violin(aes(fill = MA_fac)) +
+                          geom_hline(yintercept = 1, color = "black") +
+                          geom_violin(aes(fill = MA_fac), color = "grey50") +
                           stat_summary(aes(color = MA_fac), fun.data=data_summary, position = position_dodge(width = 0.9)) +
                           facet_grid(rows = vars(Beta_fac), cols = vars(Ref_Yr_fac))+
                           xlab("Index of Abundance")+
