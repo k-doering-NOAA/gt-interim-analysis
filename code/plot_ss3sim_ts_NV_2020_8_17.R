@@ -37,7 +37,8 @@ data_summary <- function(x) {
 dat_vioplot <-  dat_plot %>% 
                   filter(!is.na(SpawnBio)) %>% 
                   filter(year == 2025)
-dat_vioplot$Index_fac <- factor(dat_vioplot$Index, levels = c("5", "6", "7", "8", "9"))
+dat_vioplot$Index_fac <- factor(dat_vioplot$Index, levels = c("5", "6", "7", "8", "9"), 
+                                labels = c("MRFSS", "HB_E", "Larval", "SEAMAP", "Video"))
 dat_vioplot$Beta_fac <- factor(dat_vioplot$Beta, levels = c("0", "1","3"),
                                labels = c("Beta = 0", "Beta = 1", "Beta = 3"))
 dat_vioplot$MA_fac <- factor(dat_vioplot$MA, levels = c("1", "3"))
@@ -58,7 +59,7 @@ SSBratio_2025_plot <-   ggplot(dat_vioplot, aes(x = Index_fac, y = SSBratio)) +
                           guides(color = FALSE)+
                           theme()+
                           theme_classic()
-ggplot2::ggsave(file.path("figures", "SSBratio_2025.png"), height = 8, width = 12, units = "in")                          
+ggplot2::ggsave(file.path("figures", "SSBratio_2025.png"), height = 12, width = 15, units = "in")                          
 # make for different years? Include all years?   
 
 # create plots: SPR30 ----
