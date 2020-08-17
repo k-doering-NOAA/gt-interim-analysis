@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+SS_runs
+results/ss3sim_ts_NV_2020_8_17.csv
