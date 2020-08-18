@@ -25,25 +25,68 @@ dat_plot <- full_join(dat_filter_OM, dat_filter_EM) %>%
                     mutate(SSBratio = SpawnBio/SSB_approach_SPR30) %>% 
                     separate(scenario, into = c("MA", "Beta", "Index", "Ref_Yr"), 
                             sep = "_", remove = FALSE)
+dat_plot$Index_fac <- factor(dat_plot$Index, levels = c("5", "6", "7", "8", "9"), 
+                                labels = c("MRFSS", "HB_E", "Larval", "SEAMAP", "Video"))
+dat_plot$Beta_fac <- factor(dat_plot$Beta, levels = c("0", "1","3"),
+                               labels = c("Beta = 0", "Beta = 1", "Beta = 3"))
+dat_plot$MA_fac <- factor(dat_plot$MA, levels = c("1", "3"))
+dat_plot$Ref_Yr_fac <- factor(dat_plot$Ref_Yr, levels = c("0", "2013", "2017", "2035"), 
+                                 labels = c("Ref index - pred", "Ref index - yr 2013", 
+                                            "Ref index - yr 2017", "Ref index - equil" ))
+# calculate RMSE ----
+RMSE <- dat_plot %>% 
+              mutate(squared_res_SSB = (SpawnBio - SSB_approach_SPR30)^2) %>% 
+              filter(year >= 2020) %>% 
+              filter(year <= 2025) %>% 
+              filter(!is.na(SpawnBio)) %>% 
+              select(scenario, squared_res_SSB) %>% 
+              group_by(scenario) %>% 
+              summarize(mean_squared_SSB = mean(squared_res_SSB)) %>% 
+              mutate(RMSE_SSB = sqrt(mean_squared_SSB))
 
-# create plots: ratio of SSB/SSBatSPR30 ----
+RE <- dat_plot %>% 
+        mutate(RE = (SpawnBio - SSB_approach_SPR30)/SpawnBio) %>%
+        filter(year >= 2020) %>% 
+        filter(year <= 2025) %>% 
+        filter(!is.na(SpawnBio)) 
+MRE <- RE %>% 
+        group_by(scenario) %>% 
+        summarize(MRE = median(RE)) %>% 
+        separate(scenario, into = c("MA", "Beta", "Index", "Ref_Yr"), 
+                 sep = "_", remove = FALSE)
+  
+# create RE plot ----
 data_summary <- function(x) {
   m <- median(x)
   ymin <- m-sd(x)
   ymax <- m+sd(x)
   return(c(y=m,ymin=ymin,ymax=ymax))
 }
+ggplot(RE, aes(x = Index, y = RE)) +
+  geom_hline(yintercept = 0, color = "black") +
+  geom_violin(aes(fill = MA), color = "grey50") +
+  stat_summary(aes(color = MA), fun.data=data_summary, 
+               position = position_dodge(width = 0.9)) +
+  facet_grid(rows = vars(Beta), cols = vars(Ref_Yr))+
+  xlab("Index of Abundance")+
+  scale_color_manual(values = rep("black", length.out = length(unique(RE$MA)))) +
+  labs(fill = "Moving Avg", 
+       title = "RE of SSB compared to SSB@SPR30 in years 2020-2025") +
+  scale_fill_brewer(palette = "Set2", direction = -1)+
+  guides(color = FALSE)+
+  theme()+
+  theme_classic()
+ggplot2::ggsave(file.path("figures", "RE_2020_2025.png"), height = 12, width = 15, units = "in")     
+
+ggplot(MRE, aes(x = Index, y = MRE)) +
+  geom_bar(aes(fill = MA), stat = "identity", position = "dodge" ) +
+  facet_grid(rows = vars(Beta), cols = vars(Ref_Yr))+
+  theme_classic()
+ggplot2::ggsave(file.path("figures", "MedianRE_2020_2025.png"), height = 12, width = 15, units = "in")     
+# create plots: ratio of SSB/SSBatSPR30 ----
 # create factors for plotting
 dat_vioplot <-  dat_plot %>% 
                   filter(!is.na(SpawnBio))
-dat_vioplot$Index_fac <- factor(dat_vioplot$Index, levels = c("5", "6", "7", "8", "9"), 
-                                labels = c("MRFSS", "HB_E", "Larval", "SEAMAP", "Video"))
-dat_vioplot$Beta_fac <- factor(dat_vioplot$Beta, levels = c("0", "1","3"),
-                               labels = c("Beta = 0", "Beta = 1", "Beta = 3"))
-dat_vioplot$MA_fac <- factor(dat_vioplot$MA, levels = c("1", "3"))
-dat_vioplot$Ref_Yr_fac <- factor(dat_vioplot$Ref_Yr, levels = c("0", "2013", "2017", "2035"), 
-                                 labels = c("Ref index - pred", "Ref index - yr 2013", 
-                                            "Ref index - yr 2017", "Ref index - equil" ))
   
 SSBratio_2025_plot <-   ggplot(subset(dat_vioplot, year == 2025), aes(x = Index_fac, y = SSBratio)) +
                           geom_hline(yintercept = 1, color = "black") +
@@ -80,7 +123,6 @@ SSBratio_2020_2025 <- ggplot(subset(dat_vioplot, year >= 2020 & year <= 2025),
   theme()+
   theme_classic()
 ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025.png"), height = 12, width = 15, units = "in")         
-
 
 # create plots: SPR30 ----
 # Plot SSB patterns. Note that they are the same across iterations, so only need to plot the first iteration
