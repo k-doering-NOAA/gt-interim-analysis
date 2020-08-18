@@ -35,8 +35,7 @@ data_summary <- function(x) {
 }
 # create factors for plotting
 dat_vioplot <-  dat_plot %>% 
-                  filter(!is.na(SpawnBio)) %>% 
-                  filter(year == 2025)
+                  filter(!is.na(SpawnBio))
 dat_vioplot$Index_fac <- factor(dat_vioplot$Index, levels = c("5", "6", "7", "8", "9"), 
                                 labels = c("MRFSS", "HB_E", "Larval", "SEAMAP", "Video"))
 dat_vioplot$Beta_fac <- factor(dat_vioplot$Beta, levels = c("0", "1","3"),
@@ -46,7 +45,7 @@ dat_vioplot$Ref_Yr_fac <- factor(dat_vioplot$Ref_Yr, levels = c("0", "2013", "20
                                  labels = c("Ref index - pred", "Ref index - yr 2013", 
                                             "Ref index - yr 2017", "Ref index - equil" ))
   
-SSBratio_2025_plot <-   ggplot(dat_vioplot, aes(x = Index_fac, y = SSBratio)) +
+SSBratio_2025_plot <-   ggplot(subset(dat_vioplot, year == 2025), aes(x = Index_fac, y = SSBratio)) +
                           geom_hline(yintercept = 1, color = "black") +
                           geom_violin(aes(fill = MA_fac), color = "grey50") +
                           stat_summary(aes(color = MA_fac), fun.data=data_summary, position = position_dodge(width = 0.9)) +
@@ -60,7 +59,26 @@ SSBratio_2025_plot <-   ggplot(dat_vioplot, aes(x = Index_fac, y = SSBratio)) +
                           theme()+
                           theme_classic()
 ggplot2::ggsave(file.path("figures", "SSBratio_2025.png"), height = 12, width = 15, units = "in")                          
-# make for different years? Include all years?   
+
+# All years
+
+SSBratio_2020_2025 <- ggplot(subset(dat_vioplot, year >= 2020 & year <= 2025),
+                             aes(x = Index_fac, y = SSBratio)) +
+  geom_hline(yintercept = 1, color = "black") +
+  geom_violin(aes(fill = MA_fac), color = "grey50") +
+  stat_summary(aes(color = MA_fac), fun.data=data_summary, 
+               position = position_dodge(width = 0.9)) +
+  facet_grid(rows = vars(Beta_fac), cols = vars(Ref_Yr_fac))+
+  xlab("Index of Abundance")+
+  scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$MA)))) +
+  labs(fill = "Moving Avg", 
+       title = "SSB/SSB@SPR30, yrs 2020-2025", 
+       subtitle = "Points are medians w/ stdev error bars") +
+  guides(color = FALSE)+
+  theme()+
+  theme_classic()
+ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025.png"), height = 12, width = 15, units = "in")         
+
 
 # create plots: SPR30 ----
 # Plot SSB patterns. Note that they are the same across iterations, so only need to plot the first iteration
