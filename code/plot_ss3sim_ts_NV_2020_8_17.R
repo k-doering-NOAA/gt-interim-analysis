@@ -55,6 +55,7 @@ SSBratio_2025_plot <-   ggplot(subset(dat_vioplot, year == 2025), aes(x = Index_
                           labs(fill = "Moving Avg", 
                                title = "SSB/SSB@SPR30 in year 2025", 
                                subtitle = "Points are medians w/ stdev error bars") +
+                          scale_fill_brewer(palette = "Set2", direction = -1)+
                           guides(color = FALSE)+
                           theme()+
                           theme_classic()
@@ -74,6 +75,7 @@ SSBratio_2020_2025 <- ggplot(subset(dat_vioplot, year >= 2020 & year <= 2025),
   labs(fill = "Moving Avg", 
        title = "SSB/SSB@SPR30, yrs 2020-2025", 
        subtitle = "Points are medians w/ stdev error bars") +
+  scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
   theme_classic()
