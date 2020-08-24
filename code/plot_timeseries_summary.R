@@ -87,8 +87,8 @@ ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025_violins.png"), height =
 
 data_summary_CI <- function(x) {
   m <- median(x)
-  ymin <- unname(quantile(x, probs = 0.05))
-  ymax <- unname(quantile(x, probs = 0.95))
+  ymin <- unname(quantile(x, probs = 0.025))
+  ymax <- unname(quantile(x, probs = 0.975))
   return(c(y = m,ymin = ymin,ymax = ymax))
 }
 
