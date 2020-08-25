@@ -132,7 +132,7 @@ SSBratio_ctl_2020_2025 <- ggplot(SSB_rel_ctl_plot_dat,
                position = position_dodge(width = 0.9)) +
   facet_grid(rows = vars(Ref_Yr_fac), cols = vars(Index_fac))+
   xlab("Moving average")+
-  ylab("SSB/SSB_control")
+  ylab("SSB/SSB_control")+
   scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(fill = "Beta", 
        title = "SSB/SSB_control, yrs 2020-2025", 
