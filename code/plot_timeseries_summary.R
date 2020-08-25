@@ -134,8 +134,8 @@ SSBratio_ctl_2020_2025 <- ggplot(SSB_rel_ctl_plot_dat,
   xlab("Moving average")+
   scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(fill = "Beta", 
-       title = "SSB/SSB@SPR30, yrs 2020-2025", 
-       subtitle = "Points are medians w/ stdev error bars") +
+       title = "SSB/SSB_control, yrs 2020-2025", 
+       subtitle = "Points are medians w/ std dev error bars") +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
