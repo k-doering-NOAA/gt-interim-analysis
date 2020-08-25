@@ -82,7 +82,7 @@ SSBratio_2020_2025_by_index <- ggplot(subset(dat_vioplot, year >= 2020 & year <=
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
-  theme_classic()
+  theme_classic(base_size = 20)
 ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025_violins.png"), height = 12, width = 15, units = "in")
 
 data_summary_CI <- function(x) {
@@ -106,7 +106,7 @@ SSBratio_2020_2025_error_bars <- ggplot(subset(dat_vioplot, year >= 2020 & year 
   scale_color_brewer(palette = "Set2", direction = -1)+
  #guides(color = TRUE)+
   theme()+
-  theme_classic()
+  theme_classic(base_size = 20)
 ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025_CIs.png"), height = 12, width = 15, units = "in")
 
 # calculate SSB/SSB_ctl ----
@@ -142,7 +142,7 @@ SSBratio_ctl_2020_2025 <- ggplot(SSB_rel_ctl_plot_dat,
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
-  theme_classic()
+  theme_classic(base_size = 20)
 ggplot2::ggsave(file.path("figures", "SSBratio_ctl_2020_2025_violins.png"), height = 12, width = 15, units = "in")
 
 SSBratio_ctl_2020_2025_error_bars <- ggplot(SSB_rel_ctl_plot_dat,
@@ -160,6 +160,6 @@ SSBratio_ctl_2020_2025_error_bars <- ggplot(SSB_rel_ctl_plot_dat,
   scale_color_brewer(palette = "Set2", direction = -1)+
   #guides(color = TRUE)+
   theme()+
-  theme_classic()
+  theme_classic(base_size = 20)
 ggplot2::ggsave(file.path("figures", "SSBratio_ctl_2020_2025_CIs.png"), height = 12, 
                 width = 15, units = "in")
