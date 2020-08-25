@@ -113,12 +113,14 @@ ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025_CIs.png"), height = 12,
 head(dat_plot)
 dat_ctl <- dat_plot %>% 
                   filter(scenario == "control") %>% 
-                  rename(SpawnBio_ctl = SpawnBio) %>% 
-                  select(year, iteration, SpawnBio_ctl)
+                  group_by(year) %>% 
+                  summarize(SpawnBio_ctl_mean = mean(SpawnBio))
+
+
 dat_no_ctl <- dat_plot %>% 
                 filter(scenario != "control")
-SSB_rel_ctl_plot_dat <- full_join(dat_no_ctl, dat_ctl, by = c("year", "iteration")) %>% 
-                          mutate(SSB_relative_ctl = SpawnBio/SpawnBio_ctl) %>% 
+SSB_rel_ctl_plot_dat <- full_join(dat_no_ctl, dat_ctl, by = "year") %>% 
+                          mutate(SSB_relative_ctl = SpawnBio/SpawnBio_ctl_mean) %>% 
                           filter(!is.na(SpawnBio)) %>% 
                           filter(year >= 2020) %>% 
                           filter(year <= 2025)
