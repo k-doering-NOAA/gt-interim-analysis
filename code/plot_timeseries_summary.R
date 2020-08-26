@@ -57,7 +57,7 @@ dat_plot$Ref_Yr_fac <- factor(dat_plot$Ref_Yr, levels = c("0", "2013", "2017", "
                                             "Ref index - yr 2017", "Ref index - equil" ))
 # create plots: ratio of SSB/SSBatSPR30 ----
 data_summary <- function(x) {
-  m <- median(x)
+  m <- mean(x)
   ymin <- m-sd(x)
   ymax <- m+sd(x)
   return(c(y=m,ymin=ymin,ymax=ymax))
@@ -78,7 +78,7 @@ SSBratio_2020_2025_by_index <- ggplot(subset(dat_vioplot, year >= 2020 & year <=
   scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(fill = "Beta", 
        title = "SSB/SSB@SPR30, yrs 2020-2025", 
-       subtitle = "Points are medians w/ stdev error bars") +
+       subtitle = "Points are means w/ stdev error bars") +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
@@ -86,7 +86,7 @@ SSBratio_2020_2025_by_index <- ggplot(subset(dat_vioplot, year >= 2020 & year <=
 ggplot2::ggsave(file.path("figures", "SSBratio_2020_2025_violins.png"), height = 12, width = 15, units = "in")
 
 data_summary_CI <- function(x) {
-  m <- median(x)
+  m <- mean(x)
   ymin <- unname(quantile(x, probs = 0.025))
   ymax <- unname(quantile(x, probs = 0.975))
   return(c(y = m,ymin = ymin,ymax = ymax))
@@ -102,7 +102,7 @@ SSBratio_2020_2025_error_bars <- ggplot(subset(dat_vioplot, year >= 2020 & year 
   #scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(color = "Beta", 
        title = "SSB/SSB@SPR30, yrs 2020-2025", 
-       subtitle = "Points are medians w/ 95% CI") +
+       subtitle = "Points are means w/ 95% CI") +
   scale_color_brewer(palette = "Set2", direction = -1)+
  #guides(color = TRUE)+
   theme()+
@@ -138,7 +138,7 @@ SSBratio_ctl_2020_2025 <- ggplot(SSB_rel_ctl_plot_dat,
   scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(fill = "Beta", 
        title = "SSB/SSB_control, yrs 2020-2025", 
-       subtitle = "Points are medians w/ std dev error bars") +
+       subtitle = "Points are means w/ std dev error bars") +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
   theme()+
@@ -156,7 +156,7 @@ SSBratio_ctl_2020_2025_error_bars <- ggplot(SSB_rel_ctl_plot_dat,
   #scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(color = "Beta", 
        title = "SSB/SSB_control, yrs 2020-2025", 
-       subtitle = "Points are medians w/ 95% CI") +
+       subtitle = "Points are means w/ 95% CI") +
   scale_color_brewer(palette = "Set2", direction = -1)+
   #guides(color = TRUE)+
   theme()+
