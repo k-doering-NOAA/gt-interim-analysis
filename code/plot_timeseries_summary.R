@@ -134,10 +134,10 @@ SSBratio_ctl_2020_2025 <- ggplot(SSB_rel_ctl_plot_dat,
                position = position_dodge(width = 0.9)) +
   facet_grid(rows = vars(Ref_Yr_fac), cols = vars(Index_fac))+
   xlab("Moving average")+
-  ylab("SSB/SSB_control")+
+  ylab("SSBobs/SSBexp")+
   scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(fill = "Beta", 
-       title = "SSB/SSB_control, yrs 2020-2025", 
+       title = "SSBobs/SSBexp, yrs 2020-2025", 
        subtitle = "Points are means w/ std dev error bars") +
   scale_fill_brewer(palette = "Set2", direction = -1)+
   guides(color = FALSE)+
@@ -152,10 +152,10 @@ SSBratio_ctl_2020_2025_error_bars <- ggplot(SSB_rel_ctl_plot_dat,
                position = position_dodge(width = 0.9)) +
   facet_grid(rows = vars(Ref_Yr_fac), cols = vars(Index_fac))+
   xlab("Moving average")+
-  ylab("SSB/SSB_control")+
+  ylab("SSBobs/SSBexp")+
   #scale_color_manual(values = rep("black", length.out = length(unique(dat_vioplot$Beta_fac)))) +
   labs(color = "Beta", 
-       title = "SSB/SSB_control, yrs 2020-2025", 
+       title = "SSBobs/SSBexp, yrs 2020-2025", 
        subtitle = "Points are means w/ 95% CI") +
   scale_color_brewer(palette = "Set2", direction = -1)+
   #guides(color = TRUE)+
